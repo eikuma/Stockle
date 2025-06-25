@@ -1,0 +1,225 @@
+name: Integration Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  GO_VERSION: '1.21'
+  NODE_VERSION: '18'
+  MYSQL_VERSION: '8.0'
+
+jobs:
+  integration-test:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: stockle_test
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD_TEST }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+    # ===============================
+    # 1. セットアップ
+    # ===============================
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    # ===============================
+    # 2. キャッシュ設定
+    # ===============================
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Cache Node modules
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    # ===============================
+    # 3. 依存関係インストール
+    # ===============================
+    - name: Install Go dependencies
+      run: |
+        cd backend
+        go mod download
+        go mod verify
+
+    - name: Install Node dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    # ===============================
+    # 4. データベースセットアップ
+    # ===============================
+    - name: Wait for MySQL to be ready
+      run: |
+        until mysqladmin ping -h"127.0.0.1" --silent; do
+          echo 'waiting for mysql to be connectable...'
+          sleep 2
+        done
+
+    - name: Set up test database
+      run: |
+        mysql -h 127.0.0.1 -u root -prootpassword -e "
+          CREATE DATABASE IF NOT EXISTS stockle_test;
+          GRANT ALL PRIVILEGES ON stockle_test.* TO 'testuser'@'%';
+          FLUSH PRIVILEGES;
+        "
+
+    # ===============================
+    # 5. 環境変数設定
+    # ===============================
+    - name: Create backend .env file
+      run: |
+        cd backend
+        cat > .env << EOF
+        ENV=test
+        PORT=8080
+        DB_HOST=127.0.0.1
+        DB_PORT=3306
+        DB_USER=testuser
+        DB_PASSWORD=${{ secrets.DB_PASSWORD_TEST }}
+        DB_NAME=stockle_test
+        JWT_SECRET=${{ secrets.JWT_SECRET_TEST }}
+        GROQ_API_KEY=${{ secrets.GROQ_API_KEY_TEST }}
+        ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY_TEST }}
+        CORS_ALLOWED_ORIGINS=http://localhost:3000
+        EOF
+
+    - name: Create frontend .env.local file
+      run: |
+        cd frontend
+        cat > .env.local << EOF
+        NEXT_PUBLIC_API_URL=http://localhost:8080
+        NEXTAUTH_URL=http://localhost:3000
+        NEXTAUTH_SECRET=${{ secrets.JWT_SECRET_TEST }}
+        EOF
+
+    # ===============================
+    # 6. バックエンドテスト
+    # ===============================
+    - name: Run backend unit tests
+      run: |
+        cd backend
+        go test -v -race -coverprofile=coverage.out ./...
+
+    - name: Run backend lint
+      run: |
+        cd backend
+        go vet ./...
+        gofmt -l .
+        if [ "$(gofmt -l . | wc -l)" -gt 0 ]; then
+          echo "Go code is not formatted properly"
+          exit 1
+        fi
+
+    # ===============================
+    # 7. フロントエンドテスト
+    # ===============================
+    - name: Run frontend tests
+      run: |
+        cd frontend
+        npm run test -- --coverage
+
+    - name: Run frontend lint
+      run: |
+        cd frontend
+        npm run lint
+
+    - name: Run frontend type check
+      run: |
+        cd frontend
+        npm run type-check
+
+    # ===============================
+    # 8. ビルドテスト
+    # ===============================
+    - name: Build backend
+      run: |
+        cd backend
+        go build -o api cmd/api/main.go
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+
+    # ===============================
+    # 9. 統合テスト実行
+    # ===============================
+    - name: Run integration test script
+      run: |
+        chmod +x scripts/integration-test.sh
+        ./scripts/integration-test.sh
+
+    # ===============================
+    # 10. テスト結果アップロード
+    # ===============================
+    - name: Upload backend coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./backend/coverage.out
+        flags: backend
+        name: backend-coverage
+
+    - name: Upload frontend coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        directory: ./frontend/coverage
+        flags: frontend
+        name: frontend-coverage
+
+    # ===============================
+    # 11. アーティファクト保存
+    # ===============================
+    - name: Save test artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-artifacts
+        path: |
+          backend/coverage.out
+          frontend/coverage/
+          backend/api
+          frontend/.next/
+        retention-days: 7
