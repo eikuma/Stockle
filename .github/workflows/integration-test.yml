@@ -1,0 +1,194 @@
+name: Integration Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  GO_VERSION: '1.21'
+  NODE_VERSION: '18'
+
+jobs:
+  # プロジェクト構造の確認
+  project-structure-check:
+    name: Project Structure Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check project structure
+      run: |
+        echo "=== プロジェクト構造確認 ==="
+        echo "ルートディレクトリ:"
+        ls -la
+        
+        echo "\n=== docker-compose.yml 確認 ==="
+        if [ -f "docker-compose.yml" ]; then
+          echo "✅ docker-compose.yml が存在します"
+        else
+          echo "❌ docker-compose.yml が存在しません"
+          exit 1
+        fi
+
+        echo "\n=== .env.example 確認 ==="
+        if [ -f ".env.example" ]; then
+          echo "✅ .env.example が存在します"
+        else
+          echo "❌ .env.example が存在しません"
+          exit 1
+        fi
+
+        echo "\n=== frontend ディレクトリ確認 ==="
+        if [ -d "frontend" ]; then
+          echo "✅ frontend ディレクトリが存在します"
+          ls -la frontend/
+        else
+          echo "❌ frontend ディレクトリが存在しません"
+          exit 1
+        fi
+
+        echo "\n=== backend ディレクトリ確認 ==="
+        if [ -d "backend" ]; then
+          echo "✅ backend ディレクトリが存在します"
+          ls -la backend/
+        else
+          echo "❌ backend ディレクトリが存在しません"
+          exit 1
+        fi
+
+        echo "\n=== CI/CD ワークフロー確認 ==="
+        if [ -d ".github/workflows" ]; then
+          echo "✅ GitHub Actions ワークフローが存在します"
+          ls -la .github/workflows/
+        else
+          echo "❌ GitHub Actions ワークフローが存在しません"
+          exit 1
+        fi
+
+  # Docker環境の基本テスト
+  docker-environment-test:
+    name: Docker Environment Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: project-structure-check
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Test Docker Compose configuration
+      run: |
+        echo "=== Docker Compose 設定テスト ==="
+        docker-compose config
+        
+        echo "\n=== MySQL サービス起動テスト ==="
+        docker-compose up -d mysql
+        sleep 30
+        
+        echo "\n=== MySQL 接続テスト ==="
+        docker-compose exec -T mysql mysql -uroot -prootpassword -e "SELECT 1 as test;"
+        
+        echo "\n=== Redis サービス起動テスト ==="
+        docker-compose up -d redis
+        sleep 10
+        
+        echo "\n=== Redis 接続テスト ==="
+        docker-compose exec -T redis redis-cli ping
+        
+        echo "\n=== サービス停止 ==="
+        docker-compose down
+
+  # フロントエンド基本テスト
+  frontend-basic-test:
+    name: Frontend Basic Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: project-structure-check
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: './frontend/package-lock.json'
+
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+
+    - name: Check TypeScript configuration
+      working-directory: ./frontend
+      run: |
+        echo "=== TypeScript 設定確認 ==="
+        npx tsc --noEmit --listFiles | head -10
+
+    - name: Check ESLint configuration
+      working-directory: ./frontend
+      run: |
+        echo "=== ESLint 設定確認 ==="
+        npx eslint --print-config .
+
+    - name: Run basic build test
+      working-directory: ./frontend
+      run: |
+        echo "=== Next.js ビルドテスト ==="
+        npm run build
+
+  # バックエンド基本テスト  
+  backend-basic-test:
+    name: Backend Basic Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: project-structure-check
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Initialize Go module if needed
+      working-directory: ./backend
+      run: |
+        if [ ! -f "go.mod" ]; then
+          echo "=== Go module 初期化 ==="
+          go mod init github.com/eikuma/stockle/backend
+        fi
+        
+        echo "=== Go module 確認 ==="
+        cat go.mod
+
+    - name: Check Go installation
+      run: |
+        echo "=== Go バージョン確認 ==="
+        go version
+        
+        echo "=== Go 環境確認 ==="
+        go env
+
+    - name: Run basic Go tests
+      working-directory: ./backend
+      run: |
+        echo "=== Go 基本テスト ==="
+        go fmt ./...
+        go vet ./...
+        
+        # テストファイルが存在する場合のみ実行
+        if find . -name "*_test.go" -type f | grep -q .; then
+          go test ./...
+        else
+          echo "テストファイルが見つかりません（正常）"
+        fi
