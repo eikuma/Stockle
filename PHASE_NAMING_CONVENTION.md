@@ -29,6 +29,12 @@ feature/phase1-integration
 feature/phase1-frontend
 feature/phase1-backend-infrastructure
 feature/phase1-backend-features
+
+# Phase 2
+feature/phase2-integration
+feature/phase2-frontend
+feature/phase2-backend-infrastructure
+feature/phase2-backend-features
 ```
 
 ### 2. バージョンベース
@@ -38,6 +44,12 @@ feature/mvp-integration
 feature/mvp-frontend
 feature/mvp-backend-infrastructure
 feature/mvp-backend-features
+
+# Version 2
+feature/v2-integration
+feature/v2-frontend
+feature/v2-backend-infrastructure
+feature/v2-backend-features
 ```
 
 ### 3. 機能ベース
@@ -47,17 +59,40 @@ feature/voice-integration
 feature/voice-frontend
 feature/voice-backend-infrastructure
 feature/voice-backend-features
+
+# AI強化
+feature/ai-enhancement-integration
+feature/ai-enhancement-frontend
+feature/ai-enhancement-backend-infrastructure
+feature/ai-enhancement-backend-features
+```
+
+### 4. 時期ベース
+```bash
+# 2024年Q1
+feature/2024q1-integration
+feature/2024q1-frontend
+feature/2024q1-backend-infrastructure
+feature/2024q1-backend-features
+
+# 2024年7月
+feature/2024-07-integration
+feature/2024-07-frontend
+feature/2024-07-backend-infrastructure
+feature/2024-07-backend-features
 ```
 
 ## 🚀 使用方法
 
 ### 環境変数での管理（推奨）
+
 ```bash
-# フェーズを設定
+# .envファイルまたはシェルで設定
 export PHASE="phase1"
 
-# worktreeを作成
-git worktree add -b feature/${PHASE}-integration worktree-integration
+# または開発開始時に設定
+echo "export PHASE=phase1" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ### チーム全体での初期設定
@@ -65,11 +100,17 @@ git worktree add -b feature/${PHASE}-integration worktree-integration
 # チームメンバー全員が同じフェーズ名を使用
 PHASE="mvp"  # チームで合意したフェーズ名
 
-# 各自のworktreeを作成
-git worktree add -b feature/${PHASE}-integration worktree-integration          # PdM
-git worktree add -b feature/${PHASE}-frontend worktree-frontend               # Member 1
-git worktree add -b feature/${PHASE}-backend-infrastructure worktree-backend-infrastructure  # Member 2
-git worktree add -b feature/${PHASE}-backend-features worktree-backend-features  # Member 3
+# PdM
+git worktree add -b feature/${PHASE}-integration worktree-integration
+
+# Member 1
+git worktree add -b feature/${PHASE}-frontend worktree-frontend
+
+# Member 2
+git worktree add -b feature/${PHASE}-backend-infrastructure worktree-backend-infrastructure
+
+# Member 3
+git worktree add -b feature/${PHASE}-backend-features worktree-backend-features
 ```
 
 ## 📝 フェーズ移行時の手順
@@ -98,9 +139,18 @@ git worktree add -b feature/${PHASE}-integration worktree-integration
 
 ## ⚠️ 注意事項
 
-1. **チーム内での統一** - 開発開始前に全員でフェーズ名を合意
-2. **命名の一貫性** - ハイフンで単語を区切る（kebab-case）
-3. **ドキュメント化** - 各フェーズの目的と内容を記録
+1. **チーム内での統一**
+   - 開発開始前に全員でフェーズ名を合意
+   - 同一フェーズ内では全員が同じフェーズ名を使用
+
+2. **命名の一貫性**
+   - ハイフンで単語を区切る（kebab-case）
+   - 英数字のみを使用（特殊文字は避ける）
+   - 短く分かりやすい名前を選択
+
+3. **ドキュメント化**
+   - 各フェーズの目的と内容を記録
+   - フェーズ完了時に成果物をまとめる
 
 ## 📊 フェーズ管理表の例
 
