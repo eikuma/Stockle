@@ -23,7 +23,7 @@ Git Worktreeは、同一リポジトリから複数の作業ディレクトリ�
 Stockle/                          # メインリポジトリ（main branch）
 ├── worktree-integration/         # PdM用（統合ブランチ）
 ├── worktree-frontend/           # Frontend開発用
-├── worktree-backend-infra/      # Backend基盤開発用
+├── worktree-backend-infrastructure/      # Backend基盤開発用
 └── worktree-backend-features/   # Backend機能開発用
 ```
 
@@ -57,7 +57,7 @@ git worktree list
 # 出力例：
 # /path/to/Stockle                          80f773f [main]
 # /path/to/Stockle/worktree-frontend        2026472 [feature/phase1-frontend]
-# /path/to/Stockle/worktree-backend-infra   ef2c05f [feature/phase1-backend-infra]
+# /path/to/Stockle/worktree-backend-infrastructure   ef2c05f [feature/phase1-backend-infrastructure]
 ```
 
 ### 4. Worktreeの削除
@@ -97,7 +97,7 @@ git worktree add -b feature/phase1-integration worktree-integration
 git worktree add -b feature/phase1-frontend worktree-frontend
 
 # Member 2
-git worktree add -b feature/phase1-backend-infra worktree-backend-infra
+git worktree add -b feature/phase1-backend-infrastructure worktree-backend-infrastructure
 
 # Member 3
 git worktree add -b feature/phase1-backend-features worktree-backend-features
@@ -113,7 +113,7 @@ npm run dev
 # http://localhost:3000 で開発
 
 # Member 2: バックエンド開発
-cd ../worktree-backend-infra
+cd ../worktree-backend-infrastructure
 cd backend
 go mod download
 air
@@ -134,7 +134,7 @@ cd worktree-integration
 # 各ブランチの変更を取り込む
 git fetch origin
 git merge origin/feature/phase1-frontend
-git merge origin/feature/phase1-backend-infra
+git merge origin/feature/phase1-backend-infrastructure
 git merge origin/feature/phase1-backend-features
 
 # 統合テスト実施

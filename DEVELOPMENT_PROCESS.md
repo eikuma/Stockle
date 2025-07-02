@@ -2,6 +2,8 @@
 
 ## 🎯 開発の全体像
 
+4人チーム（PdM + Member 3名）での2週間スプリント制開発プロセス
+
 ```mermaid
 graph LR
     A[Planning] --> B[Setup]
@@ -40,13 +42,16 @@ git pull origin main
 # 環境変数の設定
 cp .env.example .env
 # .envファイルを編集
+
+# フェーズを設定
+export PHASE="phase1"  # 現在のフェーズを設定
 ```
 
 #### 役割別Worktree作成
 
 **PdM（統合管理者）**
 ```bash
-git worktree add -b feature/phase1-integration worktree-integration
+git worktree add -b feature/${PHASE}-integration worktree-integration
 cd worktree-integration
 # 統合環境のセットアップ
 docker-compose up -d
@@ -54,7 +59,7 @@ docker-compose up -d
 
 **Member 1（フロントエンド）**
 ```bash
-git worktree add -b feature/phase1-frontend worktree-frontend
+git worktree add -b feature/${PHASE}-frontend worktree-frontend
 cd worktree-frontend/frontend
 npm install
 npm run dev
@@ -62,8 +67,8 @@ npm run dev
 
 **Member 2（バックエンド基盤）**
 ```bash
-git worktree add -b feature/phase1-backend-infra worktree-backend-infra
-cd worktree-backend-infra/backend
+git worktree add -b feature/${PHASE}-backend-infrastructure worktree-backend-infrastructure
+cd worktree-backend-infrastructure/backend
 go mod download
 make setup-db
 air
@@ -71,7 +76,7 @@ air
 
 **Member 3（バックエンド機能）**
 ```bash
-git worktree add -b feature/phase1-backend-features worktree-backend-features
+git worktree add -b feature/${PHASE}-backend-features worktree-backend-features
 cd worktree-backend-features/backend
 go mod download
 # AI APIキーの設定
@@ -112,7 +117,7 @@ git commit -m "feat(frontend): ユーザー認証フォームの実装"
 **夕方のプッシュ（18:00）**
 ```bash
 # その日の作業をリモートにプッシュ
-git push origin feature/phase1-frontend
+git push origin feature/${PHASE}-frontend
 
 # 簡易PR作成（レビュー用）
 gh pr create --draft --title "WIP: フロントエンド実装" --body "本日の進捗"
@@ -121,6 +126,19 @@ gh pr create --draft --title "WIP: フロントエンド実装" --body "本日�
 ### 3️⃣ 統合フェーズ（Day 9-10）
 
 #### PdMによる統合作業
+<<<<<<< HEAD
+```bash
+cd worktree-integration
+
+# 各メンバーのブランチを統合
+git merge origin/feature/${PHASE}-frontend --no-ff
+git merge origin/feature/${PHASE}-backend-infrastructure --no-ff
+git merge origin/feature/${PHASE}-backend-features --no-ff
+
+# 統合テスト実施
+docker-compose up -d
+npm run test:integration
+=======
 
 ```bash
 cd worktree-integration
@@ -211,113 +229,19 @@ gitleaks detect
 
 ### 5️⃣ PR作成とレビュー（Day 13）
 
-#### 最終PR作成（PdM）
-
 ```bash
-# 統合ブランチをプッシュ
-git push origin feature/phase1-integration
-
-# PR作成
+# 最終PR作成（PdM）
 gh pr create \
   --base main \
-  --head feature/phase1-integration \
-  --title "feat: Phase 1 MVP実装完了" \
-  --body "$(cat <<'EOF'
-## 🎯 概要
-Phase 1のMVP実装を完了しました。
-
-## ✨ 実装機能
-
-### フロントエンド
-- ✅ Next.js 14 + TypeScript基盤構築
-- ✅ 認証UI（NextAuth.js + Google OAuth）
-- ✅ 記事管理UI（保存・一覧・検索）
-- ✅ レスポンシブデザイン対応
-
-### バックエンド基盤
-- ✅ Go + Gin + GORM基盤構築
-- ✅ JWT認証システム
-- ✅ 記事管理REST API
-- ✅ Webスクレイピング機能
-
-### バックエンド機能
-- ✅ Groq/Claude API統合
-- ✅ AI要約生成機能
-- ✅ 非同期ジョブ処理
-
-## 📊 テスト結果
-- 単体テスト: 245/245 ✅ (カバレッジ: 82%)
-- 統合テスト: 38/38 ✅
-- E2Eテスト: 15/15 ✅
-- パフォーマンステスト: API応答 < 200ms ✅
-
-## 🔒 セキュリティ
-- 脆弱性スキャン: 0 issues
-- OWASP Top 10対策: 実装済み
-
-## 📋 チェックリスト
-- [x] 全機能の実装完了
-- [x] テスト合格
-- [x] ドキュメント更新
-- [x] セキュリティレビュー
-- [x] パフォーマンス要件達成
-
-## 👥 Contributors
-- @pdm: 統合・プロジェクト管理
-- @member1: フロントエンド実装
-- @member2: バックエンド基盤実装
-- @member3: AI機能実装
-
-🤖 Generated with Claude Code
-EOF
-)"
+  --head feature/${PHASE}-integration \
+  --title "feat: ${PHASE} 実装完了"
 ```
 
-#### レビュープロセス
+## 📊 進捗管理
 
-1. **自動チェック**
-   - CI/CDパイプラインの確認
-   - テスト結果の確認
-   - コードカバレッジの確認
-
-2. **相互レビュー**
-   - 各メンバーが他メンバーの実装をレビュー
-   - セキュリティ観点でのレビュー
-   - パフォーマンス観点でのレビュー
-
-3. **最終承認**
-   - 全てのチェックが完了
-   - 2名以上の承認を取得
-
-### 6️⃣ マージとリリース（Day 14）
-
-```bash
-# PRのマージ（GitHubのUIまたはCLI）
-gh pr merge --squash --delete-branch
-
-# タグ付けとリリース
-git checkout main
-git pull origin main
-git tag -a v1.0.0 -m "Phase 1 MVP Release"
-git push origin v1.0.0
-
-# リリースノート作成
-gh release create v1.0.0 \
-  --title "Phase 1 MVP Release" \
-  --notes "Phase 1の全機能を実装しました。詳細はPR #XXを参照してください。"
-```
-
-## 📈 進捗管理ツール
-
-### GitHubプロジェクトボード
-```
-TODO | IN PROGRESS | REVIEW | DONE
------|-------------|--------|------
-```
-
-### 日次進捗レポート（Slack/Discord）
+### 日次進捗レポート
 ```markdown
-## 📅 2024/01/15 進捗レポート
+## 📅 進捗レポート
 
 ### ✅ 完了タスク
 - [Frontend] 認証フォームUI実装
@@ -336,37 +260,18 @@ TODO | IN PROGRESS | REVIEW | DONE
 ```
 
 ## 🛡️ リスク管理
-
-### 技術的リスク
 | リスク | 影響度 | 対策 |
 |--------|--------|------|
 | API統合の遅延 | 高 | モックAPI先行実装 |
 | パフォーマンス問題 | 中 | 早期負荷テスト |
-| 依存関係の競合 | 低 | Docker環境統一 |
-
-### プロセスリスク
-| リスク | 影響度 | 対策 |
-|--------|--------|------|
-| コミュニケーション不足 | 高 | 日次同期徹底 |
 | 統合時のコンフリクト | 中 | 小刻みな統合 |
-| スケジュール遅延 | 中 | バッファ時間確保 |
 
 ## 🎉 成功のポイント
 
-1. **早期統合・頻繁な統合**
-   - 週2回の統合でリスクを最小化
-
-2. **明確な責任分担**
-   - 各メンバーの担当範囲を明確化
-
-3. **自動化の徹底**
-   - テスト、ビルド、デプロイの自動化
-
-4. **ドキュメント駆動**
-   - 実装前に仕様を明文化
-
-5. **品質への妥協なし**
-   - テストカバレッジ80%以上を維持
+1. **早期統合・頻繁な統合** - 週2回の統合でリスクを最小化
+2. **明確な責任分担** - 各メンバーの担当範囲を明確化  
+3. **自動化の徹底** - テスト、ビルド、デプロイの自動化
+4. **品質への妥協なし** - テストカバレッジ80%以上を維持
 
 ---
 

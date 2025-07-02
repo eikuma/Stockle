@@ -10,7 +10,7 @@
 |------|--------|----------|------------------|
 | **PdM** | Claude Code 1 | プロジェクト管理・統合・最終PR作成 | `feature/<phase>-integration` |
 | **Member 1** | Claude Code 2 | フロントエンド開発 | `feature/<phase>-frontend` |
-| **Member 2** | Claude Code 3 | バックエンド基盤開発 | `feature/<phase>-backend-infra` |
+| **Member 2** | Claude Code 3 | バックエンド基盤開発 | `feature/<phase>-backend-infrastructure` |
 | **Member 3** | Claude Code 4 | バックエンド機能・AI統合開発 | `feature/<phase>-backend-features` |
 
 ※ `<phase>`は開発フェーズに応じて変更（例: phase1, phase2, mvp, v2など）
@@ -35,7 +35,7 @@ git worktree add -b feature/${PHASE}-integration worktree-integration
 git worktree add -b feature/${PHASE}-frontend worktree-frontend
 
 # Member 2 (Backend Infrastructure)
-git worktree add -b feature/${PHASE}-backend-infra worktree-backend-infra
+git worktree add -b feature/${PHASE}-backend-infrastructure worktree-backend-infrastructure
 
 # Member 3 (Backend Features)
 git worktree add -b feature/${PHASE}-backend-features worktree-backend-features
@@ -83,8 +83,8 @@ git fetch origin feature/${PHASE}-frontend
 git merge origin/feature/${PHASE}-frontend -m "feat: フロントエンド実装を統合"
 
 # 2. バックエンド基盤の統合
-git fetch origin feature/${PHASE}-backend-infra
-git merge origin/feature/${PHASE}-backend-infra -m "feat: バックエンド基盤実装を統合"
+git fetch origin feature/${PHASE}-backend-infrastructure
+git merge origin/feature/${PHASE}-backend-infrastructure -m "feat: バックエンド基盤実装を統合"
 
 # 3. バックエンド機能の統合
 git fetch origin feature/${PHASE}-backend-features

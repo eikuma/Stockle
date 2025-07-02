@@ -17,7 +17,7 @@ feature/<phase>-<component>
 ### コンポーネント名（固定）
 - `integration`: PdM統合ブランチ
 - `frontend`: フロントエンド開発
-- `backend-infra`: バックエンド基盤開発
+- `backend-infrastructure`: バックエンド基盤開発
 - `backend-features`: バックエンド機能開発
 
 ## 📊 フェーズ名の例
@@ -27,13 +27,13 @@ feature/<phase>-<component>
 # Phase 1
 feature/phase1-integration
 feature/phase1-frontend
-feature/phase1-backend-infra
+feature/phase1-backend-infrastructure
 feature/phase1-backend-features
 
 # Phase 2
 feature/phase2-integration
 feature/phase2-frontend
-feature/phase2-backend-infra
+feature/phase2-backend-infrastructure
 feature/phase2-backend-features
 ```
 
@@ -42,13 +42,13 @@ feature/phase2-backend-features
 # MVP
 feature/mvp-integration
 feature/mvp-frontend
-feature/mvp-backend-infra
+feature/mvp-backend-infrastructure
 feature/mvp-backend-features
 
 # Version 2
 feature/v2-integration
 feature/v2-frontend
-feature/v2-backend-infra
+feature/v2-backend-infrastructure
 feature/v2-backend-features
 ```
 
@@ -57,13 +57,13 @@ feature/v2-backend-features
 # 音声機能
 feature/voice-integration
 feature/voice-frontend
-feature/voice-backend-infra
+feature/voice-backend-infrastructure
 feature/voice-backend-features
 
 # AI強化
 feature/ai-enhancement-integration
 feature/ai-enhancement-frontend
-feature/ai-enhancement-backend-infra
+feature/ai-enhancement-backend-infrastructure
 feature/ai-enhancement-backend-features
 ```
 
@@ -72,13 +72,13 @@ feature/ai-enhancement-backend-features
 # 2024年Q1
 feature/2024q1-integration
 feature/2024q1-frontend
-feature/2024q1-backend-infra
+feature/2024q1-backend-infrastructure
 feature/2024q1-backend-features
 
 # 2024年7月
 feature/2024-07-integration
 feature/2024-07-frontend
-feature/2024-07-backend-infra
+feature/2024-07-backend-infrastructure
 feature/2024-07-backend-features
 ```
 
@@ -96,7 +96,6 @@ source ~/.bashrc
 ```
 
 ### チーム全体での初期設定
-
 ```bash
 # チームメンバー全員が同じフェーズ名を使用
 PHASE="mvp"  # チームで合意したフェーズ名
@@ -108,7 +107,7 @@ git worktree add -b feature/${PHASE}-integration worktree-integration
 git worktree add -b feature/${PHASE}-frontend worktree-frontend
 
 # Member 2
-git worktree add -b feature/${PHASE}-backend-infra worktree-backend-infra
+git worktree add -b feature/${PHASE}-backend-infrastructure worktree-backend-infrastructure
 
 # Member 3
 git worktree add -b feature/${PHASE}-backend-features worktree-backend-features
@@ -124,7 +123,7 @@ gh pr merge feature/${PHASE}-integration
 # worktreeをクリーンアップ
 git worktree remove worktree-integration
 git worktree remove worktree-frontend
-git worktree remove worktree-backend-infra
+git worktree remove worktree-backend-infrastructure
 git worktree remove worktree-backend-features
 ```
 
