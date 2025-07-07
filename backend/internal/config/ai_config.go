@@ -3,14 +3,16 @@ package config
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 type AIConfig struct {
-	GroqAPIKey      string
-	AnthropicAPIKey string
-	MaxRetries      int
-	TimeoutSeconds  int
-	RateLimit       int
+	GroqAPIKey       string        `mapstructure:"groq_api_key"`
+	AnthropicAPIKey  string        `mapstructure:"anthropic_api_key"`
+	RequestTimeout   time.Duration `mapstructure:"request_timeout"`
+	MaxRetries       int           `mapstructure:"max_retries"`
+	RetryDelay       time.Duration `mapstructure:"retry_delay"`
+	RateLimitPerMin  int           `mapstructure:"rate_limit_per_min"`
 }
 
 func NewAIConfig() (*AIConfig, error) {
@@ -28,8 +30,9 @@ func NewAIConfig() (*AIConfig, error) {
 	return &AIConfig{
 		GroqAPIKey:      groqKey,
 		AnthropicAPIKey: anthropicKey,
+		RequestTimeout:  30 * time.Second,
 		MaxRetries:      3,
-		TimeoutSeconds:  30,
-		RateLimit:       100,
+		RetryDelay:      1 * time.Second,
+		RateLimitPerMin: 100,
 	}, nil
 }

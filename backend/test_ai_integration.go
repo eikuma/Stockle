@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/private/Stockle/backend/internal/config"
 	"github.com/private/Stockle/backend/internal/services"
@@ -35,8 +36,9 @@ func main() {
 		GroqAPIKey:      os.Getenv("GROQ_API_KEY"),
 		AnthropicAPIKey: os.Getenv("ANTHROPIC_API_KEY"),
 		MaxRetries:      3,
-		TimeoutSeconds:  30,
-		RateLimit:       100,
+		RequestTimeout:  30 * time.Second,
+		RetryDelay:      1 * time.Second,
+		RateLimitPerMin: 100,
 	}
 
 	// AIサービスの初期化

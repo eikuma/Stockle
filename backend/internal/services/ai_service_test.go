@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/private/Stockle/backend/internal/config"
 	"github.com/stretchr/testify/assert"
@@ -97,8 +98,9 @@ func TestAIService_ProviderFallback(t *testing.T) {
 		GroqAPIKey:      "invalid-key",
 		AnthropicAPIKey: os.Getenv("ANTHROPIC_API_KEY"),
 		MaxRetries:      3,
-		TimeoutSeconds:  30,
-		RateLimit:       100,
+		RequestTimeout:  30 * time.Second,
+		RetryDelay:      1 * time.Second,
+		RateLimitPerMin: 100,
 	}
 
 	aiService := NewAIService(cfg)

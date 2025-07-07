@@ -61,14 +61,7 @@ type LogConfig struct {
 	Format string `mapstructure:"format"` // json or console
 }
 
-type AIConfig struct {
-	GroqAPIKey       string        `mapstructure:"groq_api_key"`
-	AnthropicAPIKey  string        `mapstructure:"anthropic_api_key"`
-	RequestTimeout   time.Duration `mapstructure:"request_timeout"`
-	MaxRetries       int           `mapstructure:"max_retries"`
-	RetryDelay       time.Duration `mapstructure:"retry_delay"`
-	RateLimitPerMin  int           `mapstructure:"rate_limit_per_min"`
-}
+// AIConfig is defined in ai_config.go to avoid duplication
 
 var cfg *Config
 
