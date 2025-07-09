@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 振る舞い
+- **言語**: 日本語で回答してください
+- **ファイル編集**: 全てのファイルの末尾に改行を入れてください
+
 ## プロジェクト概要
 
 「Stockle」は記事保存アプリケーションで、ユーザーが後で読みたい記事を保存し、AIによる要約生成機能を持つWebアプリケーションです。現在は設計段階で、`docs/`フォルダに設計書が格納されています。
