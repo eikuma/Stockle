@@ -253,3 +253,7 @@ API の詳細仕様は `docs/api-design-doc.md` を参照してください。
 - [データベース設計書](docs/database-design-doc.md)
 - [機能要件定義書](docs/functional-requirements-doc.md)
 - [実装指示書](docs/implementation-guide.md)
+
+---
+
+_Last updated: 2025-01-15 - Test PR created_
