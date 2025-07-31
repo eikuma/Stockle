@@ -7,9 +7,11 @@ import (
 type User struct {
 	BaseModel
 	Email         string         `json:"email" gorm:"uniqueIndex;size:255;not null" validate:"required,email"`
-	PasswordHash  string         `json:"-" gorm:"size:255"`
+	PasswordHash  *string        `json:"-" gorm:"size:255"`
 	GoogleID      string         `json:"google_id,omitempty" gorm:"uniqueIndex;size:255"`
 	Name          string         `json:"name" gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	DisplayName   string         `json:"display_name" gorm:"size:255;not null" validate:"required,min=1,max=255"`
+	AuthProvider  string         `json:"auth_provider" gorm:"size:50;default:'email'" validate:"required"`
 	AvatarURL     string         `json:"avatar_url,omitempty" gorm:"size:500"`
 	IsActive      bool           `json:"is_active" gorm:"default:true"`
 	EmailVerified bool           `json:"email_verified" gorm:"default:false"`
@@ -22,12 +24,13 @@ type User struct {
 
 type UserSession struct {
 	BaseModel
-	UserID       uint      `json:"user_id" gorm:"not null;index"`
-	RefreshToken string    `json:"-" gorm:"uniqueIndex;size:500;not null"`
-	UserAgent    string    `json:"user_agent,omitempty" gorm:"size:500"`
-	IPAddress    string    `json:"ip_address,omitempty" gorm:"size:45"`
-	ExpiresAt    time.Time `json:"expires_at" gorm:"not null"`
-	IsActive     bool      `json:"is_active" gorm:"default:true"`
+	UserID      uint      `json:"user_id" gorm:"not null;index"`
+	TokenHash   string    `json:"-" gorm:"uniqueIndex;size:500;not null"`
+	UserAgent   string    `json:"user_agent,omitempty" gorm:"size:500"`
+	IPAddress   string    `json:"ip_address,omitempty" gorm:"size:45"`
+	ExpiresAt   time.Time `json:"expires_at" gorm:"not null"`
+	LastUsedAt  time.Time `json:"last_used_at" gorm:"not null"`
+	IsActive    bool      `json:"is_active" gorm:"default:true"`
 	
 	// Relationships
 	User User `json:"user,omitempty" gorm:"constraint:OnDelete:CASCADE"`
@@ -68,6 +71,8 @@ type UserResponse struct {
 	ID            uint                `json:"id"`
 	Email         string              `json:"email"`
 	Name          string              `json:"name"`
+	DisplayName   string              `json:"display_name"`
+	AuthProvider  string              `json:"auth_provider"`
 	AvatarURL     string              `json:"avatar_url,omitempty"`
 	IsActive      bool                `json:"is_active"`
 	EmailVerified bool                `json:"email_verified"`
@@ -82,6 +87,8 @@ func (u *User) ToResponse() UserResponse {
 		ID:            u.ID,
 		Email:         u.Email,
 		Name:          u.Name,
+		DisplayName:   u.DisplayName,
+		AuthProvider:  u.AuthProvider,
 		AvatarURL:     u.AvatarURL,
 		IsActive:      u.IsActive,
 		EmailVerified: u.EmailVerified,

@@ -11,8 +11,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/private/Stockle/backend/internal/config"
-	"github.com/private/Stockle/backend/internal/services"
+	"github.com/eikuma/stockle/backend/internal/config"
+	"github.com/eikuma/stockle/backend/internal/services"
 )
 
 func main() {

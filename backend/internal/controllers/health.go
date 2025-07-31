@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/private/Stockle/backend/internal/database"
-	"github.com/private/Stockle/backend/internal/config"
+	"github.com/eikuma/stockle/backend/internal/database"
+	"github.com/eikuma/stockle/backend/internal/config"
 )
 
 type HealthController struct {

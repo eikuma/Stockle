@@ -7,8 +7,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/private/Stockle/backend/internal/models"
-	"github.com/private/Stockle/backend/internal/repositories"
+	"github.com/eikuma/stockle/backend/internal/models"
+	"github.com/eikuma/stockle/backend/internal/repositories"
 	"github.com/google/uuid"
 )
 
@@ -171,8 +171,4 @@ func (s *JobService) processJobWithRetry(ctx context.Context, job *models.JobQue
 
 func timePtr(t time.Time) *time.Time {
 	return &t
-}
-
-func stringPtr(s string) *string {
-	return &s
 }

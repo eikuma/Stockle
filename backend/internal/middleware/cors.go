@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/private/Stockle/backend/internal/config"
+	"github.com/eikuma/stockle/backend/internal/config"
 )
 
 func CORS(cfg *config.Config) gin.HandlerFunc {

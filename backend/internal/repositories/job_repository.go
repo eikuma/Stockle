@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/private/Stockle/backend/internal/models"
+	"github.com/eikuma/stockle/backend/internal/models"
 	"gorm.io/gorm"
 )
 
