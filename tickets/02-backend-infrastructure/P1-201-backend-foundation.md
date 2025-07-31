@@ -17,61 +17,61 @@ Go + Gin + GORM + MySQLによるバックエンド基盤の構築
 ## 作業内容
 
 ### 1. Go プロジェクトの初期化
-- [ ] `backend/` ディレクトリに移動
-- [ ] `go mod init` でモジュール初期化
-- [ ] 基本的なフォルダ構造の作成
-- [ ] `.gitignore` の設定
-- [ ] `Makefile` の作成
+- [x] `backend/` ディレクトリに移動
+- [x] `go mod init` でモジュール初期化
+- [x] 基本的なフォルダ構造の作成
+- [x] `.gitignore` の設定
+- [x] `Makefile` の作成
 
 ### 2. 必要パッケージのインストール
-- [ ] Web フレームワーク: Gin
-- [ ] ORM: GORM + MySQL driver
+- [x] Web フレームワーク: Gin
+- [x] ORM: GORM + MySQL driver
 - [ ] 認証: golang-jwt/jwt
-- [ ] バリデーション: go-playground/validator
-- [ ] 設定管理: Viper
-- [ ] ロギング: Zap
-- [ ] CORS: gin-cors
+- [x] バリデーション: go-playground/validator
+- [x] 設定管理: Viper
+- [x] ロギング: Zap
+- [x] CORS: gin-cors
 - [ ] セキュリティ: crypto/bcrypt
 - [ ] ホットリロード: Air
 
 ### 3. プロジェクト構造の作成
-- [ ] `cmd/api/` - メインエントリーポイント
-- [ ] `internal/config/` - 設定管理
-- [ ] `internal/database/` - データベース接続
-- [ ] `internal/models/` - データモデル
-- [ ] `internal/controllers/` - HTTPハンドラー
-- [ ] `internal/middleware/` - ミドルウェア
-- [ ] `internal/repositories/` - データアクセス層
-- [ ] `internal/services/` - ビジネスロジック
+- [x] `cmd/api/` - メインエントリーポイント
+- [x] `internal/config/` - 設定管理
+- [x] `internal/database/` - データベース接続
+- [x] `internal/models/` - データモデル
+- [x] `internal/controllers/` - HTTPハンドラー
+- [x] `internal/middleware/` - ミドルウェア
+- [x] `internal/repositories/` - データアクセス層
+- [x] `internal/services/` - ビジネスロジック
 - [ ] `internal/validators/` - バリデーション
 - [ ] `internal/utils/` - ユーティリティ
 - [ ] `pkg/` - 外部パッケージ
 - [ ] `migrations/` - DBマイグレーション
 
 ### 4. 設定管理システム
-- [ ] 環境変数の読み込み
-- [ ] Viperによる設定管理
-- [ ] 開発/本番環境の分離
-- [ ] シークレット管理
+- [x] 環境変数の読み込み
+- [x] Viperによる設定管理
+- [x] 開発/本番環境の分離
+- [x] シークレット管理
 
 ### 5. データベース接続とモデル
-- [ ] GORM設定
-- [ ] MySQL接続設定
-- [ ] コネクションプール設定
-- [ ] 基本モデルの作成
-- [ ] マイグレーション機能
+- [x] GORM設定
+- [x] MySQL接続設定
+- [x] コネクションプール設定
+- [x] 基本モデルの作成
+- [x] マイグレーション機能
 
 ### 6. ミドルウェアの実装
-- [ ] CORS設定
-- [ ] ロギングミドルウェア
+- [x] CORS設定
+- [x] ロギングミドルウェア
 - [ ] リカバリーミドルウェア
 - [ ] レート制限
-- [ ] セキュリティヘッダー
+- [x] セキュリティヘッダー
 
 ### 7. ヘルスチェックAPI
-- [ ] `/health` エンドポイント
-- [ ] データベース接続確認
-- [ ] システム情報の返却
+- [x] `/health` エンドポイント
+- [x] データベース接続確認
+- [x] システム情報の返却
 
 ## 実装詳細
 
@@ -526,18 +526,18 @@ help:
 ## 受入条件
 
 ### 必須条件
-- [ ] `make dev` でサーバーが起動する
-- [ ] データベース接続が正常に動作する
-- [ ] `/api/v1/health` エンドポイントが応答する
+- [x] `make dev` でサーバーが起動する
+- [x] データベース接続が正常に動作する
+- [x] `/api/v1/health` エンドポイントが応答する
 - [ ] ホットリロードが正常に動作する
-- [ ] 環境変数による設定が正しく読み込まれる
+- [x] 環境変数による設定が正しく読み込まれる
 
 ### 品質条件
-- [ ] ユニットテストが通る
-- [ ] 静的解析でエラーが0件
-- [ ] データベース接続プールが適切に設定されている
-- [ ] ログが適切に出力される
-- [ ] Graceful shutdownが動作する
+- [x] ユニットテストが通る
+- [x] 静的解析でエラーが0件
+- [x] データベース接続プールが適切に設定されている
+- [x] ログが適切に出力される
+- [x] Graceful shutdownが動作する
 
 ## 推定時間
 **20時間** (4-5日)
