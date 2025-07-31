@@ -16,65 +16,65 @@ Next.js 14 + TypeScript + Tailwind CSSによるフロントエンド基盤の構
 ## 作業内容
 
 ### 1. Next.js プロジェクトの初期化
-- [ ] `frontend/` ディレクトリに移動
-- [ ] Next.js 14をApp Routerで初期化
-- [ ] TypeScript設定を有効化
-- [ ] `next.config.js` の設定
-- [ ] フォルダ構造の作成
+- [x] `frontend/` ディレクトリに移動
+- [x] Next.js 14をApp Routerで初期化
+- [x] TypeScript設定を有効化
+- [x] `next.config.js` の設定
+- [x] フォルダ構造の作成
 
 ### 2. 必要パッケージのインストール
-- [ ] UI フレームワーク: shadcn/ui, Radix UI
-- [ ] スタイリング: Tailwind CSS, class-variance-authority
-- [ ] 状態管理: Zustand
-- [ ] フォーム: React Hook Form, Zod
-- [ ] データフェッチング: TanStack Query
-- [ ] 認証: NextAuth.js
-- [ ] アニメーション: Framer Motion
-- [ ] アイコン: Lucide React
-- [ ] 開発ツール: ESLint, Prettier, Husky
+- [x] UI フレームワーク: shadcn/ui, Radix UI
+- [x] スタイリング: Tailwind CSS, class-variance-authority
+- [x] 状態管理: Zustand
+- [x] フォーム: React Hook Form, Zod
+- [x] データフェッチング: TanStack Query
+- [x] 認証: NextAuth.js
+- [x] アニメーション: Framer Motion
+- [x] アイコン: Lucide React
+- [x] 開発ツール: ESLint, Prettier, Husky
 
 ### 3. TypeScript設定
-- [ ] `tsconfig.json` の詳細設定
-- [ ] 厳密型チェックの有効化
-- [ ] パスエイリアスの設定
-- [ ] 型定義ファイルの作成
+- [x] `tsconfig.json` の詳細設定
+- [x] 厳密型チェックの有効化
+- [x] パスエイリアスの設定
+- [x] 型定義ファイルの作成
 
 ### 4. Tailwind CSS設定
-- [ ] `tailwind.config.js` の設定
-- [ ] カスタムカラーパレットの追加
-- [ ] レスポンシブブレークポイントの設定
-- [ ] カスタムコンポーネントクラスの定義
+- [x] `tailwind.config.js` の設定
+- [x] カスタムカラーパレットの追加
+- [x] レスポンシブブレークポイントの設定
+- [x] カスタムコンポーネントクラスの定義
 
 ### 5. ESLint + Prettier設定
-- [ ] `.eslintrc.json` の設定
-- [ ] `.prettierrc` の設定
-- [ ] `package.json` スクリプトの追加
+- [x] `.eslintrc.json` の設定
+- [x] `.prettierrc` の設定
+- [x] `package.json` スクリプトの追加
 - [ ] Husky + lint-staged の設定
 
 ### 6. フォルダ構造の作成
-- [ ] `src/app/` - App Router ページ
-- [ ] `src/components/` - 再利用可能コンポーネント
-- [ ] `src/features/` - 機能別モジュール
-- [ ] `src/hooks/` - カスタムフック
-- [ ] `src/lib/` - ユーティリティ関数
-- [ ] `src/services/` - API クライアント
-- [ ] `src/stores/` - Zustand ストア
-- [ ] `src/types/` - TypeScript 型定義
+- [x] `src/app/` - App Router ページ
+- [x] `src/components/` - 再利用可能コンポーネント
+- [x] `src/features/` - 機能別モジュール
+- [x] `src/hooks/` - カスタムフック
+- [x] `src/lib/` - ユーティリティ関数
+- [x] `src/services/` - API クライアント
+- [x] `src/stores/` - Zustand ストア
+- [x] `src/types/` - TypeScript 型定義
 
 ### 7. shadcn/ui コンポーネントのセットアップ
-- [ ] shadcn/ui の初期化
-- [ ] 基本コンポーネントのインストール
-  - [ ] Button
-  - [ ] Input
-  - [ ] Card
-  - [ ] Dialog
-  - [ ] Dropdown Menu
-  - [ ] Form
-  - [ ] Label
-  - [ ] Select
-  - [ ] Table
-  - [ ] Textarea
-  - [ ] Toast
+- [x] shadcn/ui の初期化
+- [x] 基本コンポーネントのインストール
+  - [x] Button
+  - [x] Input
+  - [x] Card
+  - [x] Dialog
+  - [x] Dropdown Menu
+  - [x] Form
+  - [x] Label
+  - [x] Select
+  - [x] Table
+  - [x] Textarea
+  - [x] Toast
 
 ## 実装詳細
 
@@ -280,17 +280,17 @@ export interface ArticleStore {
 ## 受入条件
 
 ### 必須条件
-- [ ] `npm run dev` でNext.js開発サーバーが起動する
-- [ ] `npm run build` でエラーなくビルドが完了する
-- [ ] ESLint + Prettierが正常に動作する
-- [ ] TypeScript型チェックがエラーなく通る
-- [ ] shadcn/ui コンポーネントが正常に表示される
+- [x] `npm run dev` でNext.js開発サーバーが起動する
+- [x] `npm run build` でエラーなくビルドが完了する
+- [x] ESLint + Prettierが正常に動作する
+- [x] TypeScript型チェックがエラーなく通る
+- [x] shadcn/ui コンポーネントが正常に表示される
 
 ### 品質条件
-- [ ] ページの初期表示が2秒以内
-- [ ] レスポンシブデザインが正常に動作する
-- [ ] アクセシビリティスコアが90以上
-- [ ] TypeScript strict モードでエラーが0件
+- [x] ページの初期表示が2秒以内
+- [x] レスポンシブデザインが正常に動作する
+- [x] アクセシビリティスコアが90以上
+- [x] TypeScript strict モードでエラーが0件
 
 ## 推定時間
 **16時間** (3-4日)
