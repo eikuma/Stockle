@@ -10,10 +10,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/private/Stockle/backend/internal/config"
-	"github.com/private/Stockle/backend/internal/controllers"
-	"github.com/private/Stockle/backend/internal/database"
-	"github.com/private/Stockle/backend/internal/middleware"
+	"github.com/eikuma/stockle/backend/internal/config"
+	"github.com/eikuma/stockle/backend/internal/controllers"
+	"github.com/eikuma/stockle/backend/internal/database"
+	"github.com/eikuma/stockle/backend/internal/middleware"
+	"github.com/eikuma/stockle/backend/internal/repositories"
+	"github.com/eikuma/stockle/backend/internal/services"
 )
 
 func main() {
@@ -86,15 +88,25 @@ func main() {
 func setupRouter(cfg *config.Config) *gin.Engine {
 	router := gin.New()
 
+	// Initialize repositories
+	userRepo := repositories.NewUserRepository(database.GetDB())
+
+	// Initialize services
+	authService := services.NewAuthService(userRepo, &cfg.JWT)
+
+	// Initialize controllers
+	healthController := controllers.NewHealthController(cfg)
+	authController := controllers.NewAuthController(authService)
+
+	// Initialize rate limiter
+	rateLimiter := middleware.NewRateLimiter()
+
 	// Middleware
 	router.Use(middleware.Logger())
 	router.Use(middleware.Recovery())
 	router.Use(middleware.SecurityHeaders())
 	router.Use(middleware.CORS(cfg))
 
-	// Health check endpoints
-	healthController := controllers.NewHealthController(cfg)
-	
 	// API routes
 	api := router.Group("/api")
 	{
@@ -104,6 +116,17 @@ func setupRouter(cfg *config.Config) *gin.Engine {
 			v1.GET("/health", healthController.Health)
 			v1.GET("/health/ready", healthController.Ready)
 			v1.GET("/health/live", healthController.Live)
+
+			// Authentication endpoints (with rate limiting)
+			auth := v1.Group("/auth")
+			auth.Use(rateLimiter.RateLimit(10, time.Minute)) // 1分間に10回まで
+			{
+				auth.POST("/register", authController.Register)
+				auth.POST("/login", authController.Login)
+				auth.POST("/refresh", authController.RefreshToken)
+				auth.POST("/logout", authController.Logout)
+				auth.GET("/me", middleware.AuthRequired(authService), authController.Me)
+			}
 		}
 	}
 

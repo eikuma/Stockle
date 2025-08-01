@@ -9,49 +9,15 @@ export interface User {
   updatedAt: string;
 }
 
-export interface Category {
-  id: string;
-  userId: string;
-  name: string;
-  color: string;
-  displayOrder: number;
-  isDefault: boolean;
-  articleCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Article {
-  id: string;
-  userId: string;
-  categoryId?: string;
-  url: string;
-  title: string;
-  summary?: string;
-  thumbnailUrl?: string;
-  author?: string;
-  siteName?: string;
-  publishedAt?: string;
-  savedAt: string;
-  lastAccessedAt?: string;
-  status: 'unread' | 'read' | 'archived';
-  isFavorite: boolean;
-  readingProgress: number;
-  wordCount?: number;
-  category?: Category;
-}
-
 // Form Types
-export interface SaveArticleForm {
-  url: string;
-  categoryId?: string;
-  tags?: string[];
-}
-
 export interface CategoryForm {
   name: string;
   color: string;
 }
+
+// Re-export article types
+export * from './article';
+import type { Article } from './article';
 
 // Store Types
 export interface AuthStore {

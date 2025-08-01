@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/private/Stockle/backend/internal/config"
+	"github.com/eikuma/stockle/backend/internal/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

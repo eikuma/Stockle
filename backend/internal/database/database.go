@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/private/Stockle/backend/internal/config"
-	"github.com/private/Stockle/backend/internal/models"
+	"github.com/eikuma/stockle/backend/internal/config"
+	"github.com/eikuma/stockle/backend/internal/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

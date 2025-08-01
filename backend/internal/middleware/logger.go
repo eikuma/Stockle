@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/private/Stockle/backend/internal/config"
+	"github.com/eikuma/stockle/backend/internal/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

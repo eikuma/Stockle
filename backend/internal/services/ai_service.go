@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/private/Stockle/backend/internal/config"
-	"github.com/private/Stockle/backend/pkg/anthropic"
-	"github.com/private/Stockle/backend/pkg/groq"
+	"github.com/eikuma/stockle/backend/internal/config"
+	"github.com/eikuma/stockle/backend/pkg/anthropic"
+	"github.com/eikuma/stockle/backend/pkg/groq"
 )
 
 type AIService struct {
