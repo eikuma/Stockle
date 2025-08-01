@@ -54,7 +54,7 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8.0.0",
     "eslint-config-next": "^15.3.4",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-prettier": "^10.1.8",
     "postcss": "^8.4.32",
     "prettier": "^3.0.0",
     "typescript": "^5.0.0"
