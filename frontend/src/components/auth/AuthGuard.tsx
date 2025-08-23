@@ -14,8 +14,12 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
+  console.log('🔒 AuthGuard State:', { isAuthenticated, isLoading });
+
   useEffect(() => {
+    console.log('🔒 AuthGuard useEffect:', { isAuthenticated, isLoading });
     if (!isLoading && !isAuthenticated) {
+      console.log('🔒 Redirecting to /auth/signin...');
       router.push('/auth/signin');
     }
   }, [isAuthenticated, isLoading, router]);

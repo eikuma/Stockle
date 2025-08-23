@@ -1,0 +1,19 @@
+FROM golang:1.23-alpine
+
+# airをインストール（ホットリロード用）- 互換性のあるバージョンを指定
+RUN go install github.com/air-verse/air@v1.61.3
+
+# 必要なパッケージをインストール
+RUN apk add --no-cache git make
+
+WORKDIR /app
+
+# 依存関係をコピー
+COPY go.mod go.sum ./
+RUN go mod download
+
+# ポート公開
+EXPOSE 8080
+
+# airで起動
+CMD ["air", "-c", ".air.toml"]
