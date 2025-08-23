@@ -70,30 +70,30 @@ func Load() (*Config, error) {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("./config")
-	
+
 	viper.AutomaticEnv()
-	
+
 	// デフォルト値を設定
 	setDefaults()
-	
+
 	// 環境変数のマッピング
 	bindEnvVars()
-	
+
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			return nil, fmt.Errorf("failed to read config file: %w", err)
 		}
 	}
-	
+
 	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
-	
+
 	if err := validateConfig(&config); err != nil {
 		return nil, fmt.Errorf("config validation failed: %w", err)
 	}
-	
+
 	cfg = &config
 	return cfg, nil
 }
@@ -111,7 +111,7 @@ func setDefaults() {
 	viper.SetDefault("server.cors.allowed_origins", []string{"http://localhost:3000"})
 	viper.SetDefault("server.cors.allowed_methods", []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"})
 	viper.SetDefault("server.cors.allowed_headers", []string{"Origin", "Content-Type", "Authorization"})
-	
+
 	// Database defaults
 	viper.SetDefault("database.host", "localhost")
 	viper.SetDefault("database.port", 3306)
@@ -121,19 +121,19 @@ func setDefaults() {
 	viper.SetDefault("database.max_open_conns", 25)
 	viper.SetDefault("database.max_idle_conns", 25)
 	viper.SetDefault("database.conn_max_lifetime", "5m")
-	
+
 	// JWT defaults
 	viper.SetDefault("jwt.access_expiry", "15m")
-	viper.SetDefault("jwt.refresh_expiry", "7d")
+	viper.SetDefault("jwt.refresh_expiry", "168h") // 7 days = 168 hours
 	viper.SetDefault("jwt.issuer", "stockle-api")
 	viper.SetDefault("jwt.cookie_domain", "localhost")
 	viper.SetDefault("jwt.cookie_secure", false)
 	viper.SetDefault("jwt.cookie_http_only", true)
-	
+
 	// Log defaults
 	viper.SetDefault("log.level", "info")
 	viper.SetDefault("log.format", "console")
-	
+
 	// AI defaults
 	viper.SetDefault("ai.request_timeout", "30s")
 	viper.SetDefault("ai.max_retries", 3)
@@ -145,18 +145,18 @@ func bindEnvVars() {
 	// Server
 	viper.BindEnv("server.port", "PORT")
 	viper.BindEnv("server.environment", "ENV")
-	
+
 	// Database
 	viper.BindEnv("database.host", "DB_HOST")
 	viper.BindEnv("database.port", "DB_PORT")
 	viper.BindEnv("database.user", "DB_USER")
 	viper.BindEnv("database.password", "DB_PASSWORD")
 	viper.BindEnv("database.database", "DB_NAME")
-	
+
 	// JWT
 	viper.BindEnv("jwt.access_secret", "JWT_ACCESS_SECRET")
 	viper.BindEnv("jwt.refresh_secret", "JWT_REFRESH_SECRET")
-	
+
 	// AI
 	viper.BindEnv("ai.groq_api_key", "GROQ_API_KEY")
 	viper.BindEnv("ai.anthropic_api_key", "ANTHROPIC_API_KEY")
@@ -166,23 +166,23 @@ func validateConfig(config *Config) error {
 	if config.Server.Port == "" {
 		return fmt.Errorf("server port is required")
 	}
-	
+
 	if config.Database.Host == "" {
 		return fmt.Errorf("database host is required")
 	}
-	
+
 	if config.Database.User == "" {
 		return fmt.Errorf("database user is required")
 	}
-	
+
 	if config.JWT.AccessSecret == "" {
 		return fmt.Errorf("JWT access secret is required")
 	}
-	
+
 	if config.JWT.RefreshSecret == "" {
 		return fmt.Errorf("JWT refresh secret is required")
 	}
-	
+
 	return nil
 }
 
