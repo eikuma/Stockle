@@ -4,10 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Home, Settings, User } from 'lucide-react';
+import { BookOpen, Home, Settings, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 export const Navigation: React.FC = () => {
   const pathname = usePathname();
+  const { isAuthenticated, logout } = useAuth();
 
   const navItems = [
     { href: '/', label: 'ホーム', icon: Home },
@@ -45,9 +47,23 @@ export const Navigation: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm">
-              ログアウト
-            </Button>
+            {isAuthenticated ? (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={logout}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                ログアウト
+              </Button>
+            ) : (
+              <Link href="/auth/signin">
+                <Button variant="default" size="sm">
+                  ログイン
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>

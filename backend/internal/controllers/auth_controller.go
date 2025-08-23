@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -144,6 +145,52 @@ func (ac *AuthController) Logout(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
+}
+
+func (ac *AuthController) GoogleAuth(c *gin.Context) {
+	fmt.Println("🔥 [GoogleAuth] Request received from:", c.ClientIP())
+	fmt.Println("🔥 [GoogleAuth] Request headers:", c.Request.Header)
+	
+	var req services.GoogleAuthRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		fmt.Printf("🔥 [GoogleAuth] JSON binding error: %v\n", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+			"code":  "INVALID_REQUEST",
+		})
+		return
+	}
+
+	fmt.Printf("🔥 [GoogleAuth] Request data: %+v\n", req)
+
+	if err := ac.validator.Struct(req); err != nil {
+		fmt.Printf("🔥 [GoogleAuth] Validation error: %v\n", err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+			"code":  "VALIDATION_ERROR",
+		})
+		return
+	}
+
+	fmt.Println("🔥 [GoogleAuth] Calling AuthService.GoogleAuth...")
+	tokens, user, err := ac.authService.GoogleAuth(req)
+	if err != nil {
+		fmt.Printf("🔥 [GoogleAuth] AuthService error: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to authenticate with Google",
+			"code":  "GOOGLE_AUTH_ERROR",
+		})
+		return
+	}
+
+	fmt.Printf("🔥 [GoogleAuth] Success! User: %+v\n", user.ToResponse())
+	fmt.Printf("🔥 [GoogleAuth] Tokens generated: hasAccessToken=%t, hasRefreshToken=%t\n", 
+		tokens.AccessToken != "", tokens.RefreshToken != "")
+
+	c.JSON(http.StatusOK, gin.H{
+		"tokens": tokens,
+		"user":   user.ToResponse(),
+	})
 }
 
 func (ac *AuthController) Me(c *gin.Context) {

@@ -2,136 +2,52 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Mail, Lock } from 'lucide-react';
-
-const signInSchema = z.object({
-  email: z.string().email('有効なメールアドレスを入力してください'),
-  password: z.string().min(8, 'パスワードは8文字以上である必要があります'),
-});
-
-type SignInForm = z.infer<typeof signInSchema>;
+import { AlertCircle } from 'lucide-react';
 
 export function SignInForm() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
-  const form = useForm<SignInForm>({
-    resolver: zodResolver(signInSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
-
-  const onSubmit = async (data: SignInForm) => {
+  const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setError(null);
-
+    
+    console.log('🔐 Starting Google OAuth sign in');
+    
     try {
-      const result = await signIn('credentials', {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError('メールアドレスまたはパスワードが正しくありません');
-      } else {
-        router.push('/dashboard');
-      }
+      await signIn('google', { callbackUrl: '/' });
     } catch (error) {
-      setError('ログインに失敗しました。もう一度お試しください。');
-    } finally {
+      console.error('🔐 Google sign in error:', error);
+      setError('Googleログインに失敗しました。もう一度お試しください。');
       setIsLoading(false);
     }
-  };
-
-  const handleGoogleSignIn = () => {
-    signIn('google', { callbackUrl: '/dashboard' });
   };
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">ログイン</CardTitle>
+        <CardTitle className="text-2xl text-center">Googleでログイン</CardTitle>
+        <p className="text-center text-sm text-muted-foreground">
+          Stockleは現在Google OAuthログインのみサポートしています
+        </p>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {error && (
-          <div className="flex items-center space-x-2 text-red-600 text-sm">
+          <div className="flex items-center space-x-2 text-red-600 text-sm bg-red-50 p-3 rounded-md">
             <AlertCircle className="w-4 h-4" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">メールアドレス</Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-              <Input
-                id="email"
-                type="email"
-                placeholder="your@example.com"
-                className="pl-10"
-                {...form.register('email')}
-              />
-            </div>
-            {form.formState.errors.email && (
-              <p className="text-red-600 text-sm">{form.formState.errors.email.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">パスワード</Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                className="pl-10"
-                {...form.register('password')}
-              />
-            </div>
-            {form.formState.errors.password && (
-              <p className="text-red-600 text-sm">{form.formState.errors.password.message}</p>
-            )}
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? 'ログイン中...' : 'ログイン'}
-          </Button>
-        </form>
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">または</span>
-          </div>
-        </div>
-
         <Button
           type="button"
-          variant="outline"
           onClick={handleGoogleSignIn}
-          className="w-full"
+          disabled={isLoading}
+          className="w-full h-12 text-base"
         >
-          <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
             <path
               fill="currentColor"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -149,23 +65,15 @@ export function SignInForm() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          Googleでログイン
+          {isLoading ? 'ログイン中...' : 'Googleでログイン'}
         </Button>
 
-        <div className="text-center text-sm">
-          <span className="text-muted-foreground">アカウントをお持ちでない方は </span>
-          <a href="/auth/signup" className="text-primary hover:underline">
-            こちら
-          </a>
-        </div>
-
-        <div className="text-center">
-          <a
-            href="/auth/forgot-password"
-            className="text-sm text-muted-foreground hover:underline"
-          >
-            パスワードを忘れた方はこちら
-          </a>
+        <div className="text-center text-xs text-muted-foreground">
+          ログインすることで、
+          <a href="/terms" className="text-primary hover:underline">利用規約</a>
+          および
+          <a href="/privacy" className="text-primary hover:underline">プライバシーポリシー</a>
+          に同意したことになります。
         </div>
       </CardContent>
     </Card>

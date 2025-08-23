@@ -94,6 +94,49 @@ func (s *AuthService) Login(email, password string) (*TokenPair, *models.User, e
 	return tokens, user, nil
 }
 
+func (s *AuthService) GoogleAuth(req GoogleAuthRequest) (*TokenPair, *models.User, error) {
+	// 既存ユーザーの確認（メールアドレスで）
+	user, err := s.userRepo.GetByEmail(req.Email)
+	if err != nil && err.Error() != "user not found" {
+		return nil, nil, err
+	}
+
+	// ユーザーが存在しない場合は新規作成
+	if user == nil {
+		user = &models.User{
+			Email:        req.Email,
+			Name:         req.Name,
+			DisplayName:  req.Name,
+			AuthProvider: "google",
+			GoogleID:     req.GoogleID,
+			AvatarURL:    req.ImageURL,
+			PasswordHash: nil, // Google OAuth ユーザーはパスワードなし
+		}
+
+		if err := s.userRepo.Create(user); err != nil {
+			return nil, nil, err
+		}
+	} else {
+		// 既存ユーザーの場合は Google 情報を更新
+		user.GoogleID = req.GoogleID
+		user.AuthProvider = "google"
+		if req.ImageURL != "" {
+			user.AvatarURL = req.ImageURL
+		}
+		if err := s.userRepo.Update(user); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	// JWTトークンペアを生成
+	tokens, err := s.generateTokenPair(user)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return tokens, user, nil
+}
+
 func (s *AuthService) RefreshToken(refreshToken string) (*TokenPair, error) {
 	// リフレッシュトークンの検証
 	session, err := s.userRepo.GetSessionByToken(refreshToken)
@@ -222,4 +265,11 @@ type LoginRequest struct {
 
 type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+type GoogleAuthRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Name     string `json:"name" validate:"required"`
+	GoogleID string `json:"google_id" validate:"required"`
+	ImageURL string `json:"image_url,omitempty"`
 }

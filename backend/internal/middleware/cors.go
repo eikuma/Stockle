@@ -10,7 +10,6 @@ import (
 
 func CORS(cfg *config.Config) gin.HandlerFunc {
 	corsConfig := cors.Config{
-		AllowOrigins:     cfg.Server.CORS.AllowedOrigins,
 		AllowMethods:     cfg.Server.CORS.AllowedMethods,
 		AllowHeaders:     cfg.Server.CORS.AllowedHeaders,
 		ExposeHeaders:    []string{"Content-Length"},
@@ -18,9 +17,11 @@ func CORS(cfg *config.Config) gin.HandlerFunc {
 		MaxAge:           12 * time.Hour,
 	}
 	
-	// Development mode: allow all origins
+	// Development mode: allow specific origins for credentials support
 	if cfg.Server.Environment == "development" {
-		corsConfig.AllowAllOrigins = true
+		corsConfig.AllowOrigins = []string{"http://localhost:3000", "http://localhost:8080"}
+	} else {
+		corsConfig.AllowOrigins = cfg.Server.CORS.AllowedOrigins
 	}
 	
 	return cors.New(corsConfig)
